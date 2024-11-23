@@ -9,6 +9,17 @@ async function clickButtonByText(buttonText) {
     }
 }
 
+async function clickButtonByText1(buttonText) {
+    const xpath = `//button[.//text()[contains(., '${buttonText}')]]`;
+    const button = await waitForElement1(xpath);
+    if (button) {
+        button.click();
+        console.log(`Clicked button with text: "${buttonText}"`);
+    }else{
+        newJobApply()
+    }
+}
+
 // Enhanced helper function for filling input or textarea fields by label
 async function fillInputByLabel(labelText, inputData, elementType = 'input') {
     // Determine the target element type ('input' is default; specify 'textarea' if needed)
@@ -48,10 +59,27 @@ function waitForElement(xpath, timeout = 5000) {
     });
 }
 
+function waitForElement1(xpath, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        const start = Date.now();
+        const interval = setInterval(() => {
+            const element = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            if (element) {
+                clearInterval(interval);
+                resolve(element);
+            } else if (Date.now() - start >= timeout) {
+                clearInterval(interval);
+                resolve(null)
+                // reject(`Element with XPath "${xpath}" not found within ${timeout}ms`);
+            }
+        }, 100);
+    });
+}
+
 
 // Function to handle the apply page
 async function startApplication() {
-    await clickButtonByText("Apply now");
+    await clickButtonByText1("Apply now");
 }
 
 // Function to handle the personal details page
