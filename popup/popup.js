@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
       startButton.classList.add("stopping");
       jobTitleInput.disabled = true;
       locationInput.disabled = true;
+      chrome.storage.local.set({ isAutomationPaused: false });
     }
   });
 
@@ -46,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Send job title and location to the backend
     const jobLinks = [ "https://pk.indeed.com/rc/clk?jk=3fb0b045840dd388&bb=K2qoxIfpmeHvvJsaH2BV3_litDMhqBUEPi30MnlzTmwZZCgqS4wd8byfwYlHxYfLmY0xLmPnvOjR9WNzurrpAjui13UWVMs2ZIr06cP_xOuuvyqVcimWb5_sMotFnPNS&xkcb=SoD667M35lOusSzmx50ObzkdCdPP&fccid=39b6e51eea365e6e&cmp=TechBucks&ti=Junior+Developer&vjs=3",
+      "https://pk.indeed.com/pagead/clk?mo=r&ad=-6NYlbfkN0CMyji5D2Sy-_-WZPdQOG5WWHnYj32kDoWiOdrBpEynC54kuVavwUHRpX_FN6E6mH2bCYGM4zdPlvEDzs-Z8rYwibOk_CmJ6ufNQpmvRXyWpzybF4Ftx5e59yjTl7cGu-t4gKO9VXePLfyoDU6YupJzgOqA_dJJ3IKaxNH9DURc1z09p8CqqmREipTT_EDSjH0aYQ1-yksyxSKP5jQ85ajjcVp1hGcRbOSMv8RdZCqX7yJNQ9kEcIBnCNtQnQpkJYHhY8NXk_84pO7PTIK5s6fnQOnhjOHsHQEncwoRhkqaNFBBv80KyjgFhtNeb7bJl0BmxqWK9Jx0diDtckfIH2QHYTZAQZnCf4wfqZx_D2QGCyjz69QVO5qbUrvERpJOSyMK6vqKVlnnN_IoJR9iQ5YjEJPKR1avYZmLntcHJR9WilRSKEaFM6gury5d2etO0D7v_uOAdzqpkGqx8q6wEQsHurCvm9axeEDlMfTvo5HzsHOd7_SRBRT5SmA8h9VD69QcJoyy0x56IEjJpd6qDuGMNeNwEn-nUqDzPlYRi-fiiP0BgaUOU8f7LriJzfYgLGVaG_4ssvvW6mT-cLYzsI4A779ztD7LZm6GbCNR-eBzdwiFl-ao7ze-n_Ef4OTAK_WLIWOsYbUuIZHSqySxDTBIFiKl7LTxMi0%3D&xkcb=SoBl6_M35tHz-PRYQx0LbzkdCdPP&camk=H-lBaXMUocKAEqDONW902g%3D%3D&from=hp&tk=1idd7v0ubj6ut800&jsa=6539&vjs=3",
 "https://pk.indeed.com/rc/clk?jk=bd50fbc4f98496ae&bb=K2qoxIfpmeHvvJsaH2BV35q-UHIp1B5Y3xc3yZXP6y0YVW3cnt2uFovwzW39kZOq2sNZ_2eYKZCBK9_bLfiELVeJT2iHRaDDtNKBUs_IJDq2y2KpGi4mdtbR5l8L2It9&xkcb=SoA667M35lOusSzmx50DbzkdCdPP&fccid=4b291d20a7ed1770&cmp=Sky-IT-Services&ti=Front+End+Developer&vjs=3"
  ];
     chrome.runtime.sendMessage({

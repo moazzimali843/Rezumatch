@@ -1,13 +1,68 @@
-
+let lastClickedUrl = null;
+let clickCountOnSameScreen = 0;
 // Helper function for clicking a button by text
+// async function clickButtonByText(buttonText) {
+//     const xpath = `//button[.//text()[contains(., '${buttonText}')]]`;
+//     const button = await waitForElement(xpath);
+//     if (button) {
+//         button.click();
+//         console.log(`Clicked button with text: "${buttonText}"`);
+//     }
+// }
+
+async function pauseAutomation() {
+    await chrome.storage.local.set({ isAutomationPaused: true });
+    console.log('Automation paused');
+}
+
+async function resumeAutomation() {
+    await chrome.storage.local.set({ isAutomationPaused: false });
+    console.log('Automation resumed');
+    // Restart the monitoring process
+    monitorURLChanges();
+}
+
+// Helper function to check automation state
+async function isAutomationPaused() {
+    const result = await chrome.storage.local.get(['isAutomationPaused']);
+    return result.isAutomationPaused || false;
+}
+
+
 async function clickButtonByText(buttonText) {
     const xpath = `//button[.//text()[contains(., '${buttonText}')]]`;
-    const button = await waitForElement(xpath);
-    if (button) {
-        button.click();
-        console.log(`Clicked button with text: "${buttonText}"`);
+    try {
+        const button = await waitForElement(xpath);
+        if (button) {
+            // Check if we're on the same URL as last click
+            const currentUrl = window.location.href;
+            
+            if (currentUrl === lastClickedUrl) {
+                clickCountOnSameScreen++;
+                console.log(`Clicked continue ${clickCountOnSameScreen} times on same screen`);
+                
+                // If clicked more than once on same screen, skip to next job
+                if (clickCountOnSameScreen >= 2) {
+                    console.log("Continue button clicked multiple times on same screen, skipping to next job");
+                    await newJobApply();
+                    return false;
+                }
+            } else {
+                // Reset counter for new URL
+                clickCountOnSameScreen = 1;
+                lastClickedUrl = currentUrl;
+            }
+
+            button.click();
+            console.log(`Clicked button with text: "${buttonText}"`);
+            return true;
+        }
+    } catch (error) {
+        console.error(`Error clicking button "${buttonText}":`, error);
+        return false;
     }
 }
+
 
 async function clickButtonByText1(buttonText) {
     const xpath = `//button[.//text()[contains(., '${buttonText}')]]`;
@@ -171,7 +226,12 @@ async function monitorURLChanges() {
         // Call the page handler for the current page
         await handlePageFlow();
        
-        
+        const paused = await isAutomationPaused();
+    
+        if (paused) {
+            console.log('Automation is paused. No actions will be taken.');
+            return;
+        }
         // Start observing URL changes
         const observer = new MutationObserver(async () => {
             const currentURL = window.location.href;
@@ -196,16 +256,19 @@ async function monitorURLChanges() {
 // }
 async function newJobApply() {
     // Retrieve jobLinks from storage
-      console.log('postapply' )
+    console.log("job applying new one",lastClickedUrl,clickCountOnSameScreen)
+    lastClickedUrl = null;
+    clickCountOnSameScreen = 0; 
       const indexResult = await chrome.storage.local.get(['currentIndex']);
       const currentIndex = indexResult.currentIndex || 0;
 
     chrome.storage.local.get(['jobLinks'], async function(result) {
         const jobLinks = result.jobLinks;
         // Use jobLinks as needed
-        
+        console.log("isAutomation: ", currentIndex,jobLinks.length,jobLinks[1])
         // Optional: Replace URL with next job link
         if (jobLinks && jobLinks.length > 0 && currentIndex < jobLinks.length) {
+            console.log("")
             window.location.replace(jobLinks[currentIndex]); 
         
         // Increment and store the new index
@@ -213,6 +276,10 @@ async function newJobApply() {
             currentIndex: currentIndex + 1 
         });
 
+
+        }
+        if ( currentIndex === jobLinks.length) {
+            pauseAutomation()
         }
     });
 }
@@ -226,6 +293,8 @@ monitorURLChanges();
 // Function to determine and handle the current page
 async function handlePageFlow() {
     const page = getCurrentPage();  // Determine the current page type
+console.log("currentPage: ",page)
+console.log("clickCountOnSameScreen: ",clickCountOnSameScreen)
 
     try {
         switch (page) {
@@ -246,6 +315,7 @@ async function handlePageFlow() {
                 break;
                 case 'post-apply':
             await newJobApply();
+            break;
             default:
                 console.error("Unknown page:", page);
                 break;
