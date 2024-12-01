@@ -42,7 +42,7 @@ async function clickButtonByText(buttonText) {
                 console.log(`Clicked continue ${clickCountOnSameScreen} times on same screen`);
                 
                 // If clicked more than once on same screen, skip to next job
-                if (clickCountOnSameScreen >= 2) {
+                if (clickCountOnSameScreen > 2) {
                     console.log("Continue button clicked multiple times on same screen, skipping to next job");
                     await newJobApply();
                     return false;
@@ -196,6 +196,7 @@ async function fillCompanyDetailsPage() {
 
 // Function to detect the current page based on URL or DOM
 function getCurrentPage() {
+    console.log("currentPage: ",window.location.href)
     if (window.location.href.includes('/viewjob')) {
         return 'apply';
     } else if (window.location.href.includes('/contact-info')) {
@@ -261,11 +262,16 @@ async function newJobApply() {
     clickCountOnSameScreen = 0; 
       const indexResult = await chrome.storage.local.get(['currentIndex']);
       const currentIndex = indexResult.currentIndex || 0;
+      console.log("currentIndex: ",currentIndex)
 
     chrome.storage.local.get(['jobLinks'], async function(result) {
         const jobLinks = result.jobLinks;
         // Use jobLinks as needed
-        console.log("isAutomation: ", currentIndex,jobLinks.length,jobLinks[1])
+        console.log("isAutomation: ", currentIndex,jobLinks.length,jobLinks)
+        if ( currentIndex === jobLinks.length) {
+            pauseAutomation()
+            window.location.replace("https://pk.indeed.com/"); 
+        }
         // Optional: Replace URL with next job link
         if (jobLinks && jobLinks.length > 0 && currentIndex < jobLinks.length) {
             console.log("")
@@ -278,9 +284,7 @@ async function newJobApply() {
 
 
         }
-        if ( currentIndex === jobLinks.length) {
-            pauseAutomation()
-        }
+
     });
 }
 
