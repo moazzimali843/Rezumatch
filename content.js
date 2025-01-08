@@ -198,8 +198,6 @@ async function relevantExperienceFilling_companyName(companyNameValue) {
 
 // Main Function to fill the relevant experience page
 async function fillRelevantExperiencePage(jobTitle, companyName) {
-    // await fillInputByLabel("Job title", "Software Engineer");
-    // await fillInputByLabel("Company", "Tech Solutions Inc.");
     relevantExperienceFilling_jobTitle(jobTitle);
     relevantExperienceFilling_companyName(companyName);
     await clickButtonByText("Continue");
@@ -208,7 +206,7 @@ async function fillRelevantExperiencePage(jobTitle, companyName) {
 // Function to handle the extra questions page
 async function fillExtraQuestionsPage(textareaValue) {
     try {
-        const textarea = document.querySelector('#textarea'); // Wait for the element
+        const textarea = document.querySelector('textarea'); // Wait for the element
         if (textarea) {
             textarea.value = ''; // Clear the input field
             textarea.value = textareaValue; // Set the new value
@@ -220,6 +218,36 @@ async function fillExtraQuestionsPage(textareaValue) {
     } catch (error) {
         console.error('Error finding the textarea input:', error); // Handle the error
     }
+}
+
+// Function to try cliking submit button and if not able, skip that job on extra questions page
+async function tryClickContinueOrSkip() {
+    let attempts = 0;
+    let maxAttempts = 5;
+
+    while (attempts < maxAttempts) {
+        console.log(`Attempt ${attempts + 1} to click 'Continue'`);
+        await clickButtonByText('Continue');
+        
+        // Wait for 1 second to ensure the page reacts to the click
+        await delay(2000);
+
+        // Check if the URL still ends with 'questions/1'
+        if (!window.location.href.endsWith('questions/1')) {
+            console.log('Successfully moved to a next page.');
+            return; // Exit if the page has changed
+        }
+
+        attempts++;
+    }
+
+    // Send success message to background script
+    chrome.runtime.sendMessage({ action: 'success' }, () => {
+        console.log('Skipping this job due to extra questions.');
+
+        // Close the current tab
+        window.close(); // This will close the tab if the browser allows it
+    });
 }
 // -------------------------------------------------------
 
@@ -255,8 +283,9 @@ async function monitorURLChanges() {
             else if (currentURL.includes('questions/1')) {
                 console.log('Filling extra questions...');
                 await delay(5000); // Wait for 5 seconds
-                await fillExtraQuestionsPage("Monday -- Friday\n9:00 AM -- 5:00 PM"); // Call specific function
-                await clickButtonByText('Continue');
+                await fillExtraQuestionsPage("Monday -- Friday\n9:00 AM -- 5:00 PM"); // Call specific function               
+                // Function to try cliking submit button and if not able, skip that job
+                await tryClickContinueOrSkip();
             } 
             else if (currentURL.endsWith('/review')) {
                 console.log('Finalizing application...');
@@ -272,7 +301,10 @@ async function monitorURLChanges() {
                 return false; // Stop monitoring
             }
             else if (currentURL.endsWith('form/intervention')) {
-                console.log('Skipping this job as it does not align with candidate expertise.');
+                // Send success message to background script
+                chrome.runtime.sendMessage({ action: 'success' }, () => {
+                    console.log('Skipping this job as it does not align with candidate expertise.');
+                });
             }
             else {
                 console.log('Unknown page. Waiting for next page...');

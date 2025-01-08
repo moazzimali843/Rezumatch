@@ -8,9 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const useHardcodedLinks = true; // Set this to `true` for testing with hardcoded links.
 
   const hardcodedJobLinks = [
-    "https://pk.indeed.com/viewjob?cmp=Maeme%2527s-Limited&t=Python%20Developer&jk=b4560bdb5df2d25e&xpse=SoCR67I33jKEOYQkjJ0LbzkdCdPP&xfps=2ff04349-fcaa-47fa-b5ea-54c5f90906e5&xkcb=SoBb67M33ig3yPRq5p0JbzkdCdPP&vjs=3&from=iaBackPress",
-    "https://pk.indeed.com/viewjob?cmp=99-Technologies&t=Python%20Developer&jk=c7bc608e15938c1c&q=indeedapply%3A1%20python%20developer&xpse=SoCc67I33jKDGWRCI50LbzkdCdPP&xfps=5c8f3579-238d-484f-8117-8c136b34443e&xkcb=SoBh67M33ig3yPRq5p0PbzkdCdPP&vjs=3&from=iaBackPress",
-    "https://pk.indeed.com/viewjob?cmp=ArkPlus-Private-Limited&t=Junior%20Python%20Developer&jk=a97257e3a17dc5ce&q=indeedapply%3A1%20python%20developer&xpse=SoBn67I33jKCxcwkgJ0LbzkdCdPP&xfps=365c1349-439a-4eed-a5fa-60ce0ee45720&xkcb=SoDV67M33ig3yPRq5p0ObzkdCdPP&vjs=3&from=iaBackPress"
+    "https://pk.indeed.com/rc/clk?jk=3914e41cd606e225&bb=FqwQDatvp3tMGdyG8_rXwpmJ485eOhqJxcmTUCJ3oSjX-adbiupniEB0zLkLlqO2jjdcsCGBjn1Bglb4fBKxhwiFXyW4-1B2A8qwBoDCzhqrNaaSZRgZv_6i5_KJjLEl&xkcb=SoCa67M33j0_bZRYZx0DbzkdCdPP&fccid=3f64c98d78db4da2&cmp=Cortech-sols-pvt-ltd&ti=Ai%2Fml+Engineer&vjs=3",
+    "https://pk.indeed.com/rc/clk?jk=45d83eca39ed440b&bb=yF2KGhWFlyljyFG-dE-CYyl1w58OZzrl4TC6JIsCo8Gh9tyPmbt03ZelAOIndYzyZSa7NbeoMf0YCF7nRJhmP09w3dMgm8vE2AwNfYpat_XJ9sjbtX3b6cx8hE0Thrab&xkcb=SoCD67M33j0TaIzToZ0LbzkdCdPP&fccid=9b1b3ed93edda4b7&cmp=Code-Graphers&ti=Python+Developer&vjs=3",
+    "https://pk.indeed.com/rc/clk?jk=28bfb18954506565&bb=yF2KGhWFlyljyFG-dE-CY0hSUWZRw9PoMvAXAa6B2Onx4vvbYRJGHXtNb8xIMS0BbomWvqgzuzbyIGF6PWoBQa42mRgXZQ2CaoB13sSx7Cfhdw2yQte01ppf7pBDQOR6&xkcb=SoA367M33j0TaIzToZ0KbzkdCdPP&fccid=854d5560752c1e18&cmp=Tecjaunt&ti=Back+End+Developer&vjs=3",
+    "https://pk.indeed.com/rc/clk?jk=9a59aa3caea2630d&bb=FqwQDatvp3tMGdyG8_rXwqVKsONEkeZEdb2eQkF81kx8zQnHlIBS9q7d-0_3BsDFKruolvoKRG-hAr_3UjWCv2GwhcYGqqXRQ3DfJXtELrjc_nYoiA38axcD7mBdi5oQ&xkcb=SoBa67M33j0_bZRYZx0ObzkdCdPP&fccid=8d2c4609b71b6afd&cmp=Smart-Placement&ti=Machine+Learning+Engineer&vjs=3"
      ];
 
   // Check automation status on popup open
