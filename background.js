@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       chrome.scripting.executeScript(
         {
           target: { tabId: tabId },
-          files: ["content_old.js"],
+          files: ["content.js"],
         },
         () => {
           console.log("content.js injected, starting retry automation...");
@@ -65,7 +65,7 @@ async function openAndAutomateTab(jobLink) {
       chrome.scripting.executeScript(
         {
           target: { tabId: tabId },
-          files: ["content_old.js"],
+          files: ["content.js"],
         },
         () => {
           console.log(

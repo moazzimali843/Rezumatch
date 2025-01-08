@@ -5,11 +5,13 @@ async function startApplication() {
     await clickButtonByText("Apply now");
 }
 
+// Actually working function
+// Here change the contact info by taking from user as input
 // Function to handle the personal details page
-async function fillContactInformationPage() {
-    await fillInputByLabel("First Name", "John");
-    await fillInputByLabel("Last Name", "Doe");
-    await fillInputByLabel("City, State", "Lahore, Pakistan");
+async function fillContactInformationPage(firstname, lastName, location) {
+    await fillInputByLabel("First Name", firstname);
+    await fillInputByLabel("Last Name", lastName);
+    await fillInputByLabel("City, State", location);
     await clickButtonByText("Continue");
 }
 
@@ -50,7 +52,7 @@ async function fillWorkExperiencePage() {
 
 // Function to handle the company details page
 async function fillCompanyDetailsPage() {
-    await fillInputByLabel("Company Name", "OpenAI");
+    await fillInputByLabel("Company Name", "Software Engineer");
     await fillInputByLabel("Location", "San Francisco");
     await clickButtonByText("Continue");
 }

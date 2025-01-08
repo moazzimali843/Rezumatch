@@ -19,7 +19,7 @@
   "content_scripts": [
     {
       "matches": ["https://*.indeed.com/*"],
-      "js": ["content_old.js"]
+      "js": ["content.js"]
     }
   ]
 }
