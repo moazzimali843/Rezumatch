@@ -1,6 +1,6 @@
 // --------------- All wait functions here ---------------
 // Function to wait for an element to appear on the page
-function waitForElementForResumeAutomation(xpath, timeout = 5000) {
+async function waitForElementForResumeAutomation(xpath, timeout = 5000) {
     return new Promise((resolve, reject) => {
         const start = Date.now();
         const intervalDuration = 100; // Check every 100 ms
@@ -26,7 +26,7 @@ function waitForElementForResumeAutomation(xpath, timeout = 5000) {
 }
 
 // Function to wait for apply now button
-function waitForApplyNowButton(xpath, timeout = 5000) {
+async function waitForApplyNowButton(xpath, timeout = 5000) {
     return new Promise((resolve, reject) => {
         const start = Date.now();
         const interval = setInterval(() => {
@@ -44,7 +44,7 @@ function waitForApplyNowButton(xpath, timeout = 5000) {
 }
 
 // Function to wait for three functions of Contact info page
-function waitForElement(className, timeout = 10000) {
+async function waitForElement(className, timeout = 10000) {
     return new Promise((resolve, reject) => {
         const start = Date.now();
         const intervalDuration = 200; // Check every 200 ms
@@ -62,7 +62,7 @@ function waitForElement(className, timeout = 10000) {
 }
 
 // A small deplay function
-function delay(ms) {
+async function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 // ---------------------------------------------------------
@@ -85,18 +85,8 @@ async function clickButtonByText(buttonText) {
     }
 }
 
-// Function to click Apply now button at absolute start page
-// async function clickApplyNowButton(buttonText) {
-//     const xpath = `//button[.//text()[contains(., '${buttonText}')]]`;
-//     const button = await waitForApplyNowButton(xpath);
-//     if (button) {
-//         button.click();
-//         console.log(`Clicked button with text: "${buttonText}"`);
-//     }
-// }
-
-// Function to get button text
-function getButtonText() {
+// Function to get text of Apply now/Applied button
+async function getButtonText() {
     const button = document.evaluate("//button[@id='indeedApplyButton']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     if (button) {
         const span = button.querySelector('span');
@@ -109,6 +99,7 @@ function getButtonText() {
     }
 }
 
+// Function to click Apply now button or skip job if applied already
 async function clickApplyNowButton() {
     const xpath = `//button[@id='indeedApplyButton']`;
     const button = await waitForApplyNowButton(xpath);
@@ -136,7 +127,6 @@ async function clickApplyNowButton() {
     }
     return false;
 }
-
 
 // Fill first name on contact info page
 async function ContactInfoFilling_firstName(firstNameValue) {
@@ -262,32 +252,36 @@ async function fillExtraQuestionsPage(textareaValue) {
 // Function to try cliking submit button and if not able, skip that job on extra questions page
 async function tryClickContinueOrSkip() {
     let attempts = 0;
-    let maxAttempts = 5;
+    const maxAttempts = 5;
 
     while (attempts < maxAttempts) {
         console.log(`Attempt ${attempts + 1} to click 'Continue'`);
         await clickButtonByText('Continue');
         
-        // Wait for 1 second to ensure the page reacts to the click
+        // Wait for 2 seconds to ensure the page reacts to the click
         await delay(2000);
 
-        // Check if the URL still ends with 'questions/1'
+        // Check if the URL has changed
         if (!window.location.href.endsWith('questions/1')) {
-            console.log('Successfully moved to a next page.');
+            console.log('Successfully moved to the next page.');
             return; // Exit if the page has changed
         }
 
         attempts++;
     }
 
+    // If maxAttempts is reached without a page change
+    console.log('Reached max attempts. Skipping this job.');
+
     // Send success message to background script
     chrome.runtime.sendMessage({ action: 'success' }, () => {
         console.log('Skipping this job due to extra questions.');
-
-        // Close the current tab
-        window.close(); // This will close the tab if the browser allows it
     });
+
+    // Close the current tab
+    window.close();
 }
+
 // -------------------------------------------------------
 
 
