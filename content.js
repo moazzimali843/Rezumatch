@@ -86,18 +86,57 @@ async function clickButtonByText(buttonText) {
 }
 
 // Function to click Apply now button at absolute start page
-async function clickApplyNowButton(buttonText) {
-    const xpath = `//button[.//text()[contains(., '${buttonText}')]]`;
-    const button = await waitForApplyNowButton(xpath);
+// async function clickApplyNowButton(buttonText) {
+//     const xpath = `//button[.//text()[contains(., '${buttonText}')]]`;
+//     const button = await waitForApplyNowButton(xpath);
+//     if (button) {
+//         button.click();
+//         console.log(`Clicked button with text: "${buttonText}"`);
+//     }
+// }
+
+// Function to get button text
+function getButtonText() {
+    const button = document.evaluate("//button[@id='indeedApplyButton']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     if (button) {
-        button.click();
-        console.log(`Clicked button with text: "${buttonText}"`);
+        const span = button.querySelector('span');
+        const actualButtonText = span ? span.textContent.trim() : '';
+        console.log("actualButtonText:", actualButtonText);
+        return actualButtonText;
+    } else {
+        console.log("Button not found.");
+        return false;
     }
 }
-// Function to start application procedure by clicking Apply now button
-async function startApplication() {
-    await clickApplyNowButton("Apply now");
+
+async function clickApplyNowButton() {
+    const xpath = `//button[@id='indeedApplyButton']`;
+    const button = await waitForApplyNowButton(xpath);
+    
+    if (button) {
+        await delay(5000);
+        const actualButtonText = await getButtonText();
+        
+        if (actualButtonText === 'Apply now') {
+            await button.click();
+            console.log(`Clicked button with text: "Apply now"`);
+            return true;
+        } else if (actualButtonText === 'Applied') {
+            console.log('Job already applied');
+            // Send success message to background script
+            chrome.runtime.sendMessage({ action: 'success' }, () => {
+                console.log('Skipping this job as it does not align with candidate expertise.');
+            });
+            window.close();
+            return true;
+        } else {
+            console.log(`Unexpected button text: "${actualButtonText}"`);
+            return false;
+        }
+    }
+    return false;
 }
+
 
 // Fill first name on contact info page
 async function ContactInfoFilling_firstName(firstNameValue) {
@@ -263,7 +302,7 @@ async function monitorURLChanges() {
         try {
             if (currentURL.includes('viewjob')) {
                 console.log('Starting application process...');
-                await startApplication(); // Call specific function
+                await clickApplyNowButton(); // Call specific function
             } 
             else if (currentURL.includes('contact-info')) {
                 console.log('Filling contact information...');
